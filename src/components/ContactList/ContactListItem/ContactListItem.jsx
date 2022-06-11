@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import s from './ContactListItem.module.css';
 
@@ -11,7 +10,7 @@ const ContactListItem = ({ id, nameContact, number, deleteContact }) => {
       <button
         className={s.deleteButton}
         type="button"
-        onClick={() => deleteContact(id)}
+        onClick={(e) => deleteContact(e.target.id)}
       >
         delete
       </button>

@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import s from './ContactForm.module.css';
+import actions from '../../redux/contacts/contacts-action'
+import { useDispatch } from 'react-redux';
 
-const ContactForm = ({ onSubmit }) => {
+const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const nameInpId = nanoid();
   const numbInpId = nanoid();
-
+  const dispatch = useDispatch();
   const changeInp = event => {
     const { name, value } = event.currentTarget;
     switch (name) {
@@ -27,7 +29,13 @@ const ContactForm = ({ onSubmit }) => {
 
   const submitInp = event => {
     event.preventDefault();
-    onSubmit({ name, number });
+    dispatch(
+      actions.addContacts({
+        name,
+        number,
+      }),
+    );
+    // onSubmit({ name, number });
     reset();
   };
   const reset = () => {
@@ -36,7 +44,7 @@ const ContactForm = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={submitInp}>
+    <form onSubmit={submitInp} action="submit">
       <label htmlFor={nameInpId}>
         <p>Name</p>
         <input
@@ -71,7 +79,5 @@ const ContactForm = ({ onSubmit }) => {
     </form>
   );
 };
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
+
 export default ContactForm;

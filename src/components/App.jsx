@@ -6,6 +6,8 @@ import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
 import useLocalStorage from '../hooks';
+import { connect, useDispatch } from 'react-redux';
+import actions from '../redux/contacts/contacts-action'
 
 const App = () => {
   const defaultValue = [
@@ -19,47 +21,38 @@ const App = () => {
     defaultValue
   );
   const [filter, setFilter] = useState('');
-
+const dispatch=useDispatch()
   const addContacts = ({ name, number }) => {
     const isContact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase());
     if (isContact) {
       Notiflix.Notify.failure(`${name} is already in contact`);
       return contacts;
     } else {
-      setContacts(prevState => {
-        return [{ id: nanoid(), name, number }, ...prevState];
-      });
+      dispatch(actions.addContacts({id: nanoid(), name, number}))      
     }
   };
-  const changeFilter = event => {
-    setFilter(event.currentTarget.value);
-  };
-  const deleteContact = itemId => {
-    setContacts(contacts.filter(item => item.id !== itemId));
-  };
+  // const changeFilter = event => {
+  //   setFilter(event.currentTarget.value);
+  // };
+  // const deleteContact = itemId => {
+  //   setContacts(contacts.filter(item => item.id !== itemId));
+  // };
 
-  const visibleContacts = value => {
-    const normalizeFilter = value.toLowerCase();
-    return contacts.filter(contact => {
-      return contact.name.toLowerCase().includes(normalizeFilter);
-    });
-  };
+
   return (
     <div className={s.phonebook}>
       <h1>Phonebook</h1>
-      <ContactForm onSubmit={addContacts} />
+      <ContactForm/>
       <h2>Contacts</h2>
       <Filter
         title="Find contacts by name"
-        filter={filter}
-        onChange={changeFilter}
       />
       <ContactList
-        contacts={visibleContacts(filter)}
-        deleteContact={deleteContact}
       />
     </div>
   );
 };
-
-export default App;
+const mapDispatchToProps=dispatch=>({
+onSubmit: contact=>dispatch(actions.addContacts(contact))
+})
+export default connect(null, mapDispatchToProps)(App);
