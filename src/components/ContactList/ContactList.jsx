@@ -15,7 +15,9 @@ const ContactList = () => {
           id={id}
           nameContact={name}
           number={number}
-          deleteContact={id => dispatch(actions.deleteContact(id))}
+          deleteContact={id => {
+            dispatch(actions.deleteContact(id));
+          }}
         />
       ))}
     </ul>

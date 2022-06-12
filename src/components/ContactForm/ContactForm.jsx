@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
-import PropTypes from 'prop-types';
+import Notiflix from 'notiflix';
 import s from './ContactForm.module.css';
-import actions from '../../redux/contacts/contacts-action'
-import { useDispatch } from 'react-redux';
+import actions from '../../redux/contacts/contacts-action';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from 'redux/contacts/selectors';
 
 const ContactForm = () => {
   const [name, setName] = useState('');
@@ -11,6 +12,7 @@ const ContactForm = () => {
   const nameInpId = nanoid();
   const numbInpId = nanoid();
   const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
   const changeInp = event => {
     const { name, value } = event.currentTarget;
     switch (name) {
@@ -29,13 +31,15 @@ const ContactForm = () => {
 
   const submitInp = event => {
     event.preventDefault();
-    dispatch(
-      actions.addContacts({
-        name,
-        number,
-      }),
+    const isContact = contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
-    // onSubmit({ name, number });
+    if (isContact) {
+      Notiflix.Notify.failure(`${name} is already in contact`);
+      return contacts;
+    } else {
+      dispatch(actions.addContacts({ name, number }));
+    }
     reset();
   };
   const reset = () => {
